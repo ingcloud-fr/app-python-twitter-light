@@ -24,7 +24,7 @@ jobs:
           aws-region: eu-west-3
 
       - name: Get AWS Account ID
-        id: aws-account
+        id: get-account-id
         run: echo "ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_ENV
 
       - name: Log in to Amazon ECR
