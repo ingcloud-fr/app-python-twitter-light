@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<h1>Articles</h1>
+<form method="get" action="{{ url_for('home') }}">
+    <label for="category">Filtrer par catégorie :</label>
+    <select id="category" name="category">
+        <option value="">Toutes</option>
+        <option value="Sciences">Sciences</option>
+        <option value="Histoire">Histoire</option>
+        <option value="Nature">Nature</option>
+        <option value="People">People</option>
+    </select>
+    <button type="submit">Filtrer</button>
+</form>
+<ul>
+    {% for article in articles %}
+        <li>
+            {% if article.image_path %}
+                <img src="{{ url_for('uploaded_file', filename=article.image_path.split('/')[-1]) }}" alt="Image" width="100">
+            {% endif %}
+            <h2><a href="{{ url_for('article', article_id=article.id) }}">{{ article.title }}</a></h2>
+            <p>{{ article.created_at.strftime('%Y-%m-%d') }} | {{ article.category }} | par {{ article.author.username }}</p>
+            <p>{{ article.content[:250] }}...</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

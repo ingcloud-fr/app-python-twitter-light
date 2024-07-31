@@ -1,0 +1,20 @@
+# Environnements virtuels
+venv/
+env/
+
+# Fichiers de configuration
+*.env
+
+# Fichiers compilés Python
+__pycache__/
+*.pyc
+
+# Fichiers et dossiers de l'IDE
+.vscode/
+.idea/
+
+# Dossier d'uploads
+static/uploads/
+
+# Fichiers de logs
+*.log

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ article.title }}</h1>
+<p>{{ article.created_at.strftime('%Y-%m-%d') }} | {{ article.category }} | par {{ article.author.username }}</p>
+{% if article.image_path %}
+    <img src="{{ url_for('uploaded_file', filename=article.image_path.split('/')[-1]) }}" alt="Image" width="300">
+{% endif %}
+<p>{{ article.content }}</p>
+{% if 'user_id' in session and article.author_id == session.user_id %}
+    <form action="{{ url_for('delete_article', article_id=article.id) }}" method="post">
+        <button type="submit">Supprimer l'article</button>
+    </form>
+    <a href="{{ url_for('edit_article', article_id=article.id) }}">Modifier l'article</a>
+{% endif %}
+{% endblock %}
