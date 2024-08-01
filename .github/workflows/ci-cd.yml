@@ -13,36 +13,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-3
+          python-version: '3.8'
 
-      - name: Get AWS Account ID
-        id: get-account-id
-        run: echo "ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Log in to Amazon ECR
+      - name: Lint with flake8
+        run: |
+          pip install flake8
+          flake8 .
+
+      - name: Login to AWS ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and push Docker image
+      - name: Build, tag, and push Docker image
+        env:
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/twitter_light:latest
         run: |
-          IMAGE_URI=${{ env.ACCOUNT_ID }}.dkr.ecr.eu-west-3.amazonaws.com/twitter_light:latest
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
 
       - name: Deploy to ECS
         env:
-          AWS_REGION: eu-west-3
+          AWS_DEFAULT_REGION: eu-west-3
           ECS_CLUSTER_NAME: twitter-stage-cluster
           ECS_SERVICE_NAME: twitter-stage-service
-          IMAGE_URI: ${{ env.ACCOUNT_ID }}.dkr.ecr.eu-west-3.amazonaws.com/twitter_light:latest
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/twitter_light:latest
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment
-    environment:
-      name: staging
