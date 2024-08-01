@@ -1,25 +1,17 @@
-# initialize_db.py
+from dotenv import load_dotenv
+import os
 
-import time
-import mysql.connector
-from app import db, app
+load_dotenv()
 
-def wait_for_db():
-    while True:
-        try:
-            conn = mysql.connector.connect(
-                host=app.config['SQLALCHEMY_DATABASE_URI'].split('@')[1].split('/')[0].split(':')[0],
-                user=app.config['SQLALCHEMY_DATABASE_URI'].split('//')[1].split(':')[0],
-                password=app.config['SQLALCHEMY_DATABASE_URI'].split(':')[2].split('@')[0]
-            )
-            conn.close()
-            break
-        except mysql.connector.Error as err:
-            print("Waiting for MySQL to be ready...")
-            time.sleep(5)
+print(f"DB_HOST={os.getenv('DB_HOST')}")
+print(f"DB_USER={os.getenv('DB_USER')}")
+print(f"DB_PASSWORD={os.getenv('DB_PASSWORD')}")
+print(f"DB_NAME={os.getenv('DB_NAME')}")
+print(f"SECRET_KEY={os.getenv('SECRET_KEY')}")
 
-wait_for_db()
+from app import db
+from config import db_config
 
-with app.app_context():
-    db.create_all()
+print(f"DB Config: {db_config}")
 
+db.create_all()
