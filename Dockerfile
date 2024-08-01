@@ -7,7 +7,7 @@ WORKDIR /app
 # Copier le fichier requirements.txt dans le conteneur
 COPY requirements.txt .
 
-# Installer les dépendances Python
+# Installer les dépendances Python à partir de requirements.txt 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste du code de l'application
