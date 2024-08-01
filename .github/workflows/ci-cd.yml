@@ -42,8 +42,8 @@ jobs:
 
       - name: Build, tag, and push Docker image
         env:
-          #IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/twitter_light:latest
-          IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-3.amazonaws.com/twitter_light:latest
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/twitter_light:latest
+          #IMAGE_URI: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-3.amazonaws.com/twitter_light:latest
         run: |
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
