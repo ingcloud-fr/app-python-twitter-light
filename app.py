@@ -78,7 +78,6 @@ def edit_article(article_id):
                 file.seek(0)
                 file.save(filepath)
                 article.image_path = filepath
-        
         article.title = title
         article.category = category
         article.content = content
