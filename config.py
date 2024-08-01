@@ -15,9 +15,9 @@ db_config = {
 SECRET_KEY = os.getenv('SECRET_KEY', 'your_secret_key')
 
 
-# Debugging print statements
-print(f"DB_HOST={db_config['host']}")
-print(f"DB_USER={db_config['user']}")
-print(f"DB_PASSWORD={db_config['password']}")
-print(f"DB_NAME={db_config['database']}")
-print(f"SECRET_KEY={SECRET_KEY}")
+# # Debugging print statements
+# print(f"DB_HOST={db_config['host']}")
+# print(f"DB_USER={db_config['user']}")
+# print(f"DB_PASSWORD={db_config['password']}")
+# print(f"DB_NAME={db_config['database']}")
+# print(f"SECRET_KEY={SECRET_KEY}")

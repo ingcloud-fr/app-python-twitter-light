@@ -10,17 +10,22 @@ import re
 from models import db, User, Article
 from config import db_config, SECRET_KEY
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['database']}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = SECRET_KEY
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['database']}"
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SECRET_KEY'] = SECRET_KEY
 
-# Configurer l'upload d'images
-UPLOAD_FOLDER = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    # Configurer l'upload d'images
+    UPLOAD_FOLDER = 'static/uploads'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-db.init_app(app)
+    db.init_app(app)
+
+    return app
+
+app = create_app()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -146,30 +151,35 @@ def write():
             flash('Tous les champs sont obligatoires.')
         elif len(content.split()) > 1000:
             flash('Le contenu dépasse la limite maximale de 1000 mots.')
-        elif file and allowed_file(file.filename):
-            if file.mimetype not in ['image/jpeg', 'image/png', 'image/gif']:
-                flash('Format d\'image non supporté.')
-            elif len(file.read()) > 1 * 1024 * 1024:  # 1 Mo
-                flash('La taille de l\'image dépasse 1 Mo.')
-            else:
-                filename = secure_filename(file.filename)
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.seek(0)
-                file.save(filepath)
+        else:
+            filepath = None
+            if file and allowed_file(file.filename):
+                if file.mimetype not in ['image/jpeg', 'image/png', 'image/gif']:
+                    flash('Format d\'image non supporté.')
+                elif len(file.read()) > 1 * 1024 * 1024:  # 1 Mo
+                    flash('La taille de l\'image dépasse 1 Mo.')
+                else:
+                    filename = secure_filename(file.filename)
+                    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.seek(0)
+                    file.save(filepath)
+                    print(f"Image saved at: {filepath}")
 
-                new_article = Article(
-                    title=title,
-                    category=category,
-                    content=content,
-                    author_id=session['user_id'],
-                    image_path=filepath
-                )
-                db.session.add(new_article)
-                db.session.commit()
-                flash('Article publié avec succès !')
-                return redirect(url_for('home'))
+            new_article = Article(
+                title=title,
+                category=category,
+                content=content,
+                author_id=session['user_id'],
+                image_path=filepath
+            )
+            db.session.add(new_article)
+            db.session.commit()
+            flash('Article publié avec succès !')
+            print("Article added successfully!")
+            return redirect(url_for('home'))
     
     return render_template('write.html')
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):

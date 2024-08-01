@@ -1,19 +1,20 @@
-# Utilisez l'image officielle de Python comme image de base
-FROM python:3.12
+# Utiliser une image de base officielle de Python
+FROM python:3.12-slim
 
-# Install dependencies
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /app
-COPY requirements.txt requirements.txt
+
+# Copier le fichier requirements.txt dans le conteneur
+COPY requirements.txt .
+
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copier le reste du code de l'application
 COPY . .
 
-# Set environment variables
-#ENV FLASK_APP=app.py
-
-# Expose port
+# Exposer le port sur lequel l'application va s'exécuter
 EXPOSE 5000
 
-# Run the command
-CMD ["bash", "-c", "python initialize_db.py && gunicorn --bind 0.0.0.0:5000 app:app"]
+# Définir la commande par défaut pour exécuter l'application
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "app:app"]
