@@ -18,7 +18,8 @@ with app.app_context():
     print(f"DB Config: {db_config}")
     
     # Check if tables exist
-    table_names = db.engine.table_names()
+    inspector = inspect(db.engine)
+    table_names = inspector.get_table_names()
     
     if 'user' not in table_names or 'article' not in table_names:
         db.create_all()
