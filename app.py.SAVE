@@ -9,10 +9,6 @@ import os
 import re
 from models import db, User, Article
 from config import db_config, SECRET_KEY
-import logging
-from logging.handlers import RotatingFileHandler
-
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def create_app():
     app = Flask(__name__)
@@ -22,22 +18,10 @@ def create_app():
 
     # Configurer l'upload d'images
     UPLOAD_FOLDER = 'static/uploads'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     db.init_app(app)
-
-    if not app.debug:
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/lwitter.log', maxBytes=10240, backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
-        ))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
-
-        app.logger.setLevel(logging.INFO)
-        app.logger.info('Lwitter startup')
 
     return app
 
@@ -199,6 +183,7 @@ def write():
             return redirect(url_for('home'))
     
     return render_template('write.html')
+
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
