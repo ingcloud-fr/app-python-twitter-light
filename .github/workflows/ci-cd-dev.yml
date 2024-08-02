@@ -34,7 +34,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-3
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to AWS ECR
         id: login-ecr
@@ -49,7 +49,8 @@ jobs:
       - name: Build, tag, and push Docker image
         env:
           #ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+
           ECR_REPOSITORY: lwitter-repo
           #IMAGE_TAG: ${{ github.sha }}
           IMAGE_TAG: latest
@@ -62,7 +63,7 @@ jobs:
           CLUSTER_NAME: lwitter-dev-cluster
           SERVICE_NAME: lwitter-dev-service
           CONTAINER_NAME: lwitter-light-container
-          IMAGE_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/lwitter-repo:latest
+          IMAGE_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/lwitter-repo:latest
         run: |
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment --region eu-west-3 --output json
 
