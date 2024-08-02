@@ -135,6 +135,10 @@ def logout():
     flash('Vous avez été déconnecté.')
     return redirect(url_for('home'))
 
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
 @app.route('/write', methods=['GET', 'POST'])
 def write():
     if 'user_id' not in session:
