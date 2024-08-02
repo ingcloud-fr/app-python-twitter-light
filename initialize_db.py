@@ -16,5 +16,12 @@ app = create_app()
 
 with app.app_context():
     print(f"DB Config: {db_config}")
-    db.create_all()
-    print("Toutes les tables ont été créées avec succès!")
+    
+    # Check if tables exist
+    table_names = db.engine.table_names()
+    
+    if 'user' not in table_names or 'article' not in table_names:
+        db.create_all()
+        print("Tables created successfully!")
+    else:
+        print("Tables already exist. No need to create them.")
