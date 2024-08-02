@@ -2,6 +2,7 @@ from app import create_app, db
 from config import db_config
 from dotenv import load_dotenv
 import os
+from sqlalchemy import inspect
 
 load_dotenv()
 
