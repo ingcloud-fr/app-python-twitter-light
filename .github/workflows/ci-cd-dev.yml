@@ -1,0 +1,76 @@
+name: CI/CD Pipeline on Dev
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Dev
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # - name: Lint with flake8
+      #   run: |
+      #     pip install flake8
+      #     flake8 .
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-3
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Create ECR repository if it does not exist
+        env:
+          ECR_REPOSITORY: lwitter-repo
+        run: |
+          aws ecr describe-repositories --repository-names $ECR_REPOSITORY || aws ecr create-repository --repository-name $ECR_REPOSITORY
+
+      - name: Build, tag, and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: lwitter-repo
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $IMAGE_URI .
+          docker push $IMAGE_URI    
+
+      - name: Update ECS service
+        env:
+          CLUSTER_NAME: lwitter-dev-cluster
+          SERVICE_NAME: lwitter-dev-service
+          CONTAINER_NAME: lwitter-light-container
+          IMAGE_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/lwitter-repo:latest
+        run: |
+          aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment --region eu-west-3 --output json
+
+      # - name: Deploy to ECS (version differente)
+      #   env:
+      #     AWS_DEFAULT_REGION: eu-west-3
+      #     ECS_CLUSTER_NAME: twitter-stage-cluster
+      #     ECS_SERVICE_NAME: twitter-stage-service
+      #     IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/twitter_light:latest
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   run: |
+      #     aws ecs update-service --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_NAME --force-new-deployment          
