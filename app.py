@@ -27,14 +27,10 @@ def create_app():
     db.init_app(app)
 
     if not app.debug:
-        if not os.path.exists('logs'):
-            os.mkdir('logs')
-        file_handler = RotatingFileHandler('logs/lwitter.log', maxBytes=10240, backupCount=10)
-        file_handler.setFormatter(logging.Formatter(
-            '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
-        ))
-        file_handler.setLevel(logging.INFO)
-        app.logger.addHandler(file_handler)
+        logging.basicConfig(level=logging.INFO)
+        handler = logging.StreamHandler()
+        handler.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
 
         app.logger.setLevel(logging.INFO)
         app.logger.info('Lwitter startup')
@@ -45,6 +41,12 @@ app = create_app()
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.before_request
+def log_request_info():
+    app.logger.info('Request Headers: %s', request.headers)
+    app.logger.info('Request Body: %s', request.get_data())
 
 @app.route('/')
 def home():
