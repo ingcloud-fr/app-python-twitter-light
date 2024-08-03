@@ -39,6 +39,14 @@ def create_app():
         app.logger.setLevel(logging.INFO)
         app.logger.info('Lwitter startup')
 
+        # Ajouter un file handler pour le health check curl (health2 pour debug)
+        curl_log_handler = RotatingFileHandler('/var/log/curl_health_check.log', maxBytes=10240, backupCount=10)
+        curl_log_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s'
+        ))
+        curl_log_handler.setLevel(logging.INFO)
+        app.logger.addHandler(curl_log_handler)        
+
     return app
 
 app = create_app()
