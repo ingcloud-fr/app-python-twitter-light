@@ -162,6 +162,11 @@ def health_check():
     app.logger.info('Health check endpoint was hit !')
     return 'OK', 200
 
+@app.route('/health2')
+def health_check2():
+    app.logger.info('Health check endpoint 2 was hit !!!')
+    return 'OK', 200
+
 @app.route('/write', methods=['GET', 'POST'])
 def write():
     if 'user_id' not in session:
