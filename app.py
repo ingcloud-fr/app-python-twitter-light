@@ -1,3 +1,4 @@
+# Serveur de test DEBUG
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
