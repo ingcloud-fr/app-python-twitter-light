@@ -3,6 +3,8 @@ from config import db_config
 from dotenv import load_dotenv
 import os
 from sqlalchemy import inspect
+from models import User  # Importer le modèle User
+from werkzeug.security import generate_password_hash  # Importer generate_password_hash
 
 load_dotenv()
 
