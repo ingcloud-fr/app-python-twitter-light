@@ -189,7 +189,15 @@ def health_check():
     #app.logger.info('Health check endpoint was hit !')
     return 'OK', 200
 
+@app.route('/admin')  
+def admin():  
+    if 'user_id' not in session or not session.get('is_admin'):  
+        flash('Accès refusé.') 
+        return redirect(url_for('home'))  
 
+    users = User.query.all()  
+    articles = Article.query.all()  
+    return render_template('admin.html', users=users, articles=articles)  
 
 @app.route('/write', methods=['GET', 'POST'])
 def write():

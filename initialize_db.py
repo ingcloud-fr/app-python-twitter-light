@@ -27,3 +27,18 @@ with app.app_context():
         print("Tables created successfully!")
     else:
         print("Tables already exist. No need to create them.")
+
+    # Créer un administrateur par défaut
+    admin_email = 'admin@admin.com'
+    if not User.query.filter_by(email=admin_email).first():
+        admin_user = User(
+            username='admin', 
+            email=admin_email, 
+            password=generate_password_hash('admin', method='pbkdf2:sha256'), 
+            is_admin=True
+        )
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Default admin user created successfully!")
+    else:
+        print("Default admin user already exists.")

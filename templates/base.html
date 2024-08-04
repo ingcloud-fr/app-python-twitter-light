@@ -16,6 +16,10 @@
             <a href="{{ url_for('login') }}">Se connecter</a>
             <a href="{{ url_for('register') }}">S'inscrire</a>
         {% endif %}
+        {% if session.is_admin %}
+        <p><a href="{{ url_for('admin') }}">Accéder à la page d'administration</a></p>
+        {% endif %}
+
     </nav>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
