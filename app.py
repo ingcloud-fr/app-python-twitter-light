@@ -130,17 +130,36 @@ def register():
         username = request.form['username']
         email = request.form['email']
         password = request.form['password']
+
+        app.logger.info(f"Attempting to register user: {username}, {email}")
+
+        # Vérifiez si l'adresse e-mail est valide
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             flash('Adresse email invalide.')
             return redirect(url_for('register'))
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        new_user = User(username=username, email=email, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Inscription réussie ! Veuillez vous connecter.')
-        return redirect(url_for('login'))
+        # Vérifiez si l'adresse e-mail existe déjà
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Adresse e-mail déjà utilisée. Veuillez en choisir une autre.')
+            return redirect(url_for('register'))
+
+        try:
+            # Hacher le mot de passe et créer un nouvel utilisateur
+            hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+            new_user = User(username=username, email=email, password=hashed_password)
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash('Inscription réussie ! Veuillez vous connecter.')
+            return redirect(url_for('login'))
+        except Exception as e:
+            app.logger.error(f"Error during registration: {e}")
+            flash('Erreur lors de l\'inscription. Veuillez réessayer.')
+            return redirect(url_for('register'))
+
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
