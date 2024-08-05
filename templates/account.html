@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Compte{% endblock %}
+
+{% block content %}
+<h2>Compte</h2>
+<p><strong>Nom d'utilisateur:</strong> {{ user.username }}</p>
+<p><strong>Adresse email:</strong> {{ user.email }}</p>
+<h2>Changer son mot de passe</h2>
+<form method="POST" action="{{ url_for('account') }}">
+    <label for="current_password">Mot de passe actuel :</label>
+    <input type="password" name="current_password" id="current_password" required><br>
+
+    <label for="new_password">Nouveau mot de passe :</label>
+    <input type="password" name="new_password" id="new_password" required><br>
+
+    <label for="confirm_password">Confirmez le nouveau mot de passe :</label>
+    <input type="password" name="confirm_password" id="confirm_password" required><br>
+
+    <input type="submit" value="Mettre à jour le mot de passe">
+</form>
+{% endblock %}

@@ -8,7 +8,7 @@ from datetime import datetime
 import os
 import re
 from models import db, User, Article
-from config import db_config, flask_secret_key  # Remplacer db_credentials par db_config
+from config import db_config, SECRET_KEY
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import g 
@@ -19,7 +19,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['database']}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = flask_secret_key  # Remplacer SECRET_KEY par flask_secret_key
+    app.config['SECRET_KEY'] = SECRET_KEY
 
     # Configurer l'upload d'images
     UPLOAD_FOLDER = 'static/uploads'
@@ -38,7 +38,13 @@ def create_app():
         app.logger.addHandler(file_handler)
 
         app.logger.setLevel(logging.INFO)
-        app.logger.info('Lwitter startup')    
+        app.logger.info('Lwitter startup')
+
+
+        # Ajouter la redirection des logs Gunicorn
+        gunicorn_logger = logging.getLogger('gunicorn.error')
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
 
     return app
 
@@ -59,6 +65,18 @@ def load_user():
         g.user = User.query.get(session['user_id'])  
     else:  
         g.user = None  
+# def start_timer():
+#     g.start = time()
+
+# @app.after_request
+# def log_request(response):
+#     if 'start' in g:
+#         elapsed = time() - g.start
+#         app.logger.info(f"{request.method} {request.path} - {elapsed} seconds")
+#     return response
+
+
+
 
 @app.route('/')
 def home():
@@ -188,6 +206,7 @@ def logout():
 
 @app.route('/health')
 def health_check():
+    #app.logger.info('Health check endpoint was hit !')
     return 'OK', 200
 
 @app.route('/admin')  

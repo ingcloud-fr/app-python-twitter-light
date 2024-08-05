@@ -9,11 +9,12 @@ from werkzeug.security import generate_password_hash  # Importer generate_passwo
 load_dotenv()
 
 # Debug
-# print(f"DB_HOST={os.getenv('DB_HOST')}")
-# print(f"DB_USER={os.getenv('DB_USER')}")
-# print(f"DB_PASSWORD={os.getenv('DB_PASSWORD')}")
-# print(f"DB_NAME={os.getenv('DB_NAME')}")
-# print(f"SECRET_KEY={os.getenv('SECRET_KEY')}")
+print(f"DB_HOST={os.getenv('DB_HOST')}")
+print(f"DB_USER={os.getenv('DB_USER')}")
+print(f"DB_PASSWORD={os.getenv('DB_PASSWORD')}")
+print(f"DB_NAME={os.getenv('DB_NAME')}")
+print(f"SECRET_KEY={os.getenv('SECRET_KEY')}")
+print(f"ADMIN_PASSWORD={os.getenv('ADMIN_PASSWORD')}")
 
 app = create_app()
 
@@ -35,8 +36,8 @@ with app.app_context():
     if not User.query.filter_by(email=admin_email).first():
         admin_user = User(
             username='admin', 
-            email=admin_email, 
-            password=generate_password_hash('admin', method='pbkdf2:sha256'), 
+            email=admin_email,
+            password=generate_password_hash(os.getenv('ADMIN_PASSWORD'), method='pbkdf2:sha256'), 
             is_admin=True
         )
         db.session.add(admin_user)

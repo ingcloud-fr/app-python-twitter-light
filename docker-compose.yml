@@ -1,6 +1,7 @@
 services:
   web:
     build: .
+    command: gunicorn -w 4 -b 0.0.0.0:5000 app:app --timeout 120
     ports:
       - "5000:5000"
     environment:
@@ -9,13 +10,19 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - SECRET_KEY=${SECRET_KEY}
+      - USE_AWS_SECRETS=False
     depends_on:
       - db
-    #command: bash -c "python initialize_db.py && gunicorn --bind 0.0.0.0:5000 app:app"
-    command: gunicorn -w 4 -b 0.0.0.0:5000 app:app
     env_file:
       - .env
-
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1.0'
+    #       memory: 1024M
+    #     reservations:
+    #       cpus: '0.5'
+    #       memory: 512M
   db:
     image: mysql:8.0 # Le moteur Mysql RDS est en 8.0.35
     environment:
