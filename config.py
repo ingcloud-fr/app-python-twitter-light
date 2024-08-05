@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_secret_from_aws(secret_name):
-    region_name = "your-region-name"  # Remplacez par votre région AWS
+    region_name = "eu-west-3"  # Remplacez par votre région AWS
 
     # Créez un client Secrets Manager
     client = boto3.client(
@@ -35,7 +35,7 @@ if USE_AWS_SECRETS:
 
     if secret_data:
         db_config = {
-            'user': secret_data['DB_USER'],
+            'user': os.getenv['DB_USER'],
             'password': secret_data['DB_PASSWORD'],
             'host': os.getenv('DB_HOST', 'localhost'),
             'database': os.getenv('DB_NAME', 'twitter_light')
@@ -50,4 +50,4 @@ else:
         'database': os.getenv('DB_NAME', 'twitter_light')
     }
 
-flask_secret_key = os.getenv('SECRET_KEY_SESSION', 'default_secret_key')
+flask_secret_key = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')
