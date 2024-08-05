@@ -145,7 +145,7 @@ def register():
             return redirect(url_for('register'))
 
         try:
-            # Hacher le mot de passe et créer un nouvel utilisateur
+            # Hacher le mot de passe et créer un nouvel utilisateur 
             hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
             new_user = User(username=username, email=email, password=hashed_password)
             db.session.add(new_user)
