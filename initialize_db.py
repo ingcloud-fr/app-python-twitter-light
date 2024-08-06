@@ -13,7 +13,7 @@ print(f"DB_HOST={os.getenv('DB_HOST')}")
 print(f"DB_USER={os.getenv('DB_USER')}")
 print(f"DB_PASSWORD={os.getenv('DB_PASSWORD')}")
 print(f"DB_NAME={os.getenv('DB_NAME')}")
-print(f"SECRET_KEY={os.getenv('SECRET_KEY')}")
+print(f"FLASK_SECRET_KEY={os.getenv('FLASK_SECRET_KEY')}")
 print(f"ADMIN_PASSWORD={os.getenv('ADMIN_PASSWORD')}")
 
 app = create_app()

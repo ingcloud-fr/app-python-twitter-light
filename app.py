@@ -8,7 +8,7 @@ from datetime import datetime
 import os
 import re
 from models import db, User, Article
-from config import db_config, flask_secret_key  # Remplacer db_credentials par db_config
+from config import db_config, flask_secret_key  
 import logging
 from logging.handlers import RotatingFileHandler
 from flask import g 
@@ -19,7 +19,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}/{db_config['database']}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = flask_secret_key  # Remplacer SECRET_KEY par flask_secret_key
+    app.config['SECRET_KEY'] = flask_secret_key  
 
     # Configurer l'upload d'images
     UPLOAD_FOLDER = 'static/uploads'

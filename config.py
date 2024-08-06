@@ -12,7 +12,8 @@ db_config = {
     'database': os.getenv('DB_NAME', 'default_db_name')
 }
 
-flask_secret_key = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')
+flask_secret_key = os.getenv('FLASK_SECRET_KEY')
+admin_password = os.getenv('ADMIN_PASSWORD')
 
 
 # # Debugging print statements
