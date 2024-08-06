@@ -6,6 +6,9 @@ from sqlalchemy import inspect
 from models import User  # Importer le modèle User
 from werkzeug.security import generate_password_hash  # Importer generate_password_hash
 
+
+print("INITIALIZE_DB.PY")
+
 load_dotenv()
 
 # Debug
@@ -24,6 +27,7 @@ with app.app_context():
     # Check if tables exist
     inspector = inspect(db.engine)
     table_names = inspector.get_table_names()
+    print(f"table_names : {table_names}")
     
     if 'user' not in table_names or 'article' not in table_names:
         db.create_all()

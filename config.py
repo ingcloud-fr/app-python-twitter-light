@@ -2,6 +2,8 @@
 import os
 from dotenv import load_dotenv
 
+print("CONFIG.PY")
+
 # Charger les variables d'environnement à partir du fichier .env
 load_dotenv()
 
