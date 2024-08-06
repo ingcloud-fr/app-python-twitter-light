@@ -65,6 +65,7 @@ jobs:
           CONTAINER_NAME: lwitter-light-container
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           DB_NAME: ${{ vars.DB_NAME }}
           IMAGE_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/lwitter-repo:latest
         run: |
