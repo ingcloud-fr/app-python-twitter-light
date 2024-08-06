@@ -63,10 +63,10 @@ jobs:
           CLUSTER_NAME: lwitter-dev-cluster
           SERVICE_NAME: lwitter-dev-service
           CONTAINER_NAME: lwitter-light-container
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          DB_NAME: ${{ vars.DB_NAME }}
+          # DB_USER: ${{ secrets.DB_USER }}
+          # DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          # DB_NAME: ${{ vars.DB_NAME }}
           IMAGE_URL: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/lwitter-repo:latest
         run: |
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment --region eu-west-3 --output json
